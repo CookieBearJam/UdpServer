@@ -1,0 +1,15 @@
+{
+  "type": "REQUEST_NMS_ONE",
+  "content":{
+    "user_cnt":1,
+    "users":[{
+      "src_ip": "10.1.1.1",
+      "dst_ip": "10.1.2.1",
+      "dev_id": "ed1",
+      "in_port": 3,
+      "srv_type": "PTDN_UNI",
+      "srv_class": "PTDN_CLASS_00",
+      "srv_flag": "010203"
+    }]
+  }
+}

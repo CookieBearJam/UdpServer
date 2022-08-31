@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="jxl"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="jxl">
+				<Option output="/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/jxl" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/buptuser/ed_test/clion_host/jxl/./jsoncpp/include"/>
+					<Add directory="/home/buptuser/ed_test/clion_host/jxl/./*.h"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/x86_64-linux-gnu/c++/7.5.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/backward"/>
+					<Add directory="/usr/include/clang/6.0.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 jxl"/>
+					<CompileFile command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="jxl/fast">
+				<Option output="/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/jxl" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/buptuser/ed_test/clion_host/jxl/./jsoncpp/include"/>
+					<Add directory="/home/buptuser/ed_test/clion_host/jxl/./*.h"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/x86_64-linux-gnu/c++/7.5.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/backward"/>
+					<Add directory="/usr/include/clang/6.0.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 jxl/fast"/>
+					<CompileFile command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j24 -f &quot;/home/buptuser/ed_test/clion_host/jxl/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/SrvInfo.cpp">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/SrvInfo.h">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/SrvInfoUdpServer.cpp">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/SrvInfoUdpServer.h">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/jsoncpp/json_reader.cpp">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/jsoncpp/json_value.cpp">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/jsoncpp/json_writer.cpp">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/main.cpp">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/utils.h">
+			<Option target="jxl"/>
+		</Unit>
+		<Unit filename="/home/buptuser/ed_test/clion_host/jxl/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
