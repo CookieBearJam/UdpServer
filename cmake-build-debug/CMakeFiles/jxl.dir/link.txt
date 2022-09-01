@@ -1,1 +1,0 @@
-/usr/bin/c++  -g -D_GLIBCXX_DEBUG   CMakeFiles/jxl.dir/main.cpp.o CMakeFiles/jxl.dir/jsoncpp/json_reader.cpp.o CMakeFiles/jxl.dir/jsoncpp/json_writer.cpp.o CMakeFiles/jxl.dir/jsoncpp/json_value.cpp.o CMakeFiles/jxl.dir/SrvInfo.cpp.o CMakeFiles/jxl.dir/SrvInfoUdpServer.cpp.o  -o jxl -lpthread 
