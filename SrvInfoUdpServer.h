@@ -22,9 +22,7 @@
 #include <arpa/inet.h>
 
 #include <mutex> // 互斥变量头文件，暂时还没用，当前操作只有读
-
 #include <thread>
-
 #include "SrvInfo.h"
 
 using namespace std;
@@ -48,7 +46,6 @@ public:
     // 同步变量：用户业务表
     static SrvInfoList srvInfoList;
 
-
     // 从文件中加载静态变量内容
     static int initSrvList(const string &filepath);
 
@@ -67,5 +64,18 @@ public:
     ~SrvInfoUdpServer();
 };
 
+
+//int ipStr2Int() {
+//    //将字符串表示的IP转换为整数IP
+//    int dwAddr = inet_addr("127.0.0.1");
+//    cout << "NO1 :IP的整数形式 " << dwAddr << endl;
+//}
+//
+//
+//void int2IPStr(int dwAddr) {
+//    struct in_addr inAddr;
+//    inAddr.s_addr = dwAddr;
+//    cout << "NO2: IP的字符串形式 " << inet_ntoa(inAddr) << endl;
+//}
 
 #endif //JXL_SRVINFOUDPSERVER_H

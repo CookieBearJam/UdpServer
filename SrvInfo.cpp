@@ -30,7 +30,7 @@ void SrvInfo::copyfrom(const SrvInfo &from) {
 // todo:string需要指定为引用类型吗
 void SrvInfo::toJsonStr(std::string *srvInfoJsonStr) {
     Json::Value root, content, srvInfo;
-    root["type"] = "REQUEST_NMS_ONE";
+    root["type"] = "REQUEST_USER";
 
     srvInfo["src_ip"] = this->getSrcIp();
     srvInfo["dst_ip"] = this->getDstIp();
@@ -50,6 +50,20 @@ void SrvInfo::toJsonStr(std::string *srvInfoJsonStr) {
     std::cout << "Json:\n" << *srvInfoJsonStr << std::endl;
 }
 
+
+int hexStr2Int(const string &hexArrStr) {
+    int intVal = 0;
+//    uint8_t preTmp, postTmp; // 前、后四位的值
+    // hexArrStr应该是6个字符，i从0~6
+    for (int i = 0; i < 3; i++) {
+//        preTmp = (hexArrStr.at(2 * i) - 48);
+//        postTmp = (hexArrStr.at(2 * i + 1) - 48);
+//        intVal += (10 * preTmp + postTmp) * pow(16, 2 - i);
+        intVal += pow(16, 5 - i);
+    }
+    return intVal;
+}
+
 /*
  * 注意在解析文件的时候一定要写对user_cnt
  * */
@@ -58,7 +72,7 @@ int SrvInfoList::init(const string &filepath, int userCnt) {
 
     // std::ios::binary指定了二进制的读取方式，完整的读取所有的数据
     Json::Value jsonRoot;
-    // 启用严格模式，当解析非法Json时返回false,不再自动容错
+    // 启用严格模式，当解析非法Json时返回false，不再自动容错
     Json::Reader jsonReader(Json::Features::strictMode());
 
     ifstream ifs(filepath, ios::binary);
@@ -75,6 +89,7 @@ int SrvInfoList::init(const string &filepath, int userCnt) {
 
     // 读取根节点信息
     int user_cnt = jsonRoot["user_cnt"].asInt();
+    string tmpStr;
 
     if (user_cnt == 0) {
         cout << "user_cnt in file equals to 0." << endl;
@@ -91,30 +106,37 @@ int SrvInfoList::init(const string &filepath, int userCnt) {
 
         this->list = new SrvInfo[user_cnt];
         for (int i = 0; i < user_cnt; i++) {
-            this->list[i].setSrcIp(jsonRoot["users"][i]["src_ip"].asString());
-            this->list[i].setDstIp(jsonRoot["users"][i]["dst_ip"].asString());
+            tmpStr = jsonRoot["users"][i]["src_ip"].asString();
+            this->list[i].setSrcIp(inet_addr(tmpStr.c_str()));
+            tmpStr = jsonRoot["users"][i]["dst_ip"].asString();
+            this->list[i].setDstIp(inet_addr(tmpStr.c_str()));
             this->list[i].setDevId(jsonRoot["users"][i]["dev_id"].asString());
             this->list[i].setInPort(jsonRoot["users"][i]["in_port"].asInt());
-            this->list[i].setSrvType(jsonRoot["users"][i]["srv_type"].asString());
-            this->list[i].setSrvClass(jsonRoot["users"][i]["srv_class"].asString());
-            this->list[i].setSrvNum(jsonRoot["users"][i]["srv_num"].asString());
+            this->list[i].setSrvType(jsonRoot["users"][i]["srv_type"].asInt());
+            this->list[i].setSrvClass(jsonRoot["users"][i]["srv_class"].asInt());
+            tmpStr = jsonRoot["users"][i]["srv_num"].asString();
+            if (tmpStr.length() > 0) {
+                //todo:check val of this
+                this->list[i].setSrvNum(hexStr2Int(tmpStr));
+            } else {
+                this->list[i].setSrvNum(0);
+            }
         }
     }
 
     this->size = user_cnt;
 
-    // todo：整个finally来关文件
     ifs.close();
     return 0;
 }
 
 int SrvInfoList::clear() {
+    // 只清除列表元素的数据
     return 0;
 }
 
-
 // 返回值-1表示没有找到符合的用户信息，查找成功则返回0
-int SrvInfoList::getSrvInfoBySrcAndDst(const string &srcIP, const string &dstIP, SrvInfo *foundItem) {
+int SrvInfoList::getSrvInfoBySrcAndDst(uint32_t srcIP, uint32_t dstIP, SrvInfo *foundItem) const {
     for (int i = 0; i < this->size; i++) {
         if (srcIP == this->list[i].getSrcIp() && dstIP == this->list[i].getDstIp()) {
             foundItem->copyfrom(this->list[i]);
@@ -124,18 +146,19 @@ int SrvInfoList::getSrvInfoBySrcAndDst(const string &srcIP, const string &dstIP,
     return -1;
 }
 
-void SrvInfoList::toJsonStr(std::string *srvInfoJsonStr) {
+
+void SrvInfoList::toJsonStr(std::string *srvInfoJsonStr) const {
     Json::Value root, content, srvInfo;
-    root["type"] = "REQUEST_NMS_ALL";
+    root["type"] = REQUEST_USER_ALL;
 
     for (int i = 0; i < this->size; i++) {
         srvInfo.clear();
         srvInfo["src_ip"] = this->list[i].getSrcIp();
         srvInfo["dst_ip"] = this->list[i].getDstIp();
         srvInfo["dev_id"] = this->list[i].getDevId();
-        srvInfo["in_port"] = this->list[i].getSrcIp();
-        srvInfo["srv_type"] = this->list[i].getDstIp();
-        srvInfo["srv_class"] = this->list[i].getDevId();
+        srvInfo["in_port"] = this->list[i].getInPort();
+        srvInfo["srv_type"] = this->list[i].getSrvType();
+        srvInfo["srv_class"] = this->list[i].getSrvClass();
         srvInfo["srv_num"] = this->list[i].getSrvNum();
         content["users"][i] = srvInfo;
     }
@@ -146,7 +169,7 @@ void SrvInfoList::toJsonStr(std::string *srvInfoJsonStr) {
     *srvInfoJsonStr = root.toStyledString();
     root.clear();
 
-    std::cout << "Json string of all items:\n" << srvInfoJsonStr << std::endl;
+    std::cout << "Json string of all items:\n" << *srvInfoJsonStr << std::endl;
 }
 
 

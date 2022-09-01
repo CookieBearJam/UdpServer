@@ -16,26 +16,26 @@ void startService(std::mutex &syncReadLock) {
 
     SrvInfoUdpServer server;
     cout << "Thread " << this_thread::get_id() << "'s number of servers: " << SrvInfoUdpServer::serverCount << endl;
-    // 初始化对象需要执行初始业务表格加载，其他对象只需要执行同步的读写
+    // 1. 初始化对象需要执行初始业务表格加载，其他对象只需要执行同步的读写
     if (SrvInfoUdpServer::serverCount == 1) {
         SrvInfoUdpServer::initSrvList(CONFIG_FILE_PATH);
     }
-
     syncReadLock.unlock();
 
-    // 1.2 初始化server对象本身：创建socket等
+    // 2. 初始化server对象本身：创建socket等
     server.initServer();
     server.startServer();
 }
 
 
-// todo: 1.3需要设置销毁server的操作，也就是管理员的操作接口需要配置???
+// todo: 1.3需要设置销毁server的操作，也就是配置管理员的操作接口
 // 信号量处理函数：销毁线程，调用对象的析构
 void signalHandler(int signum) {
     cout << "Interrupt signal (" << signum << ") received.\n";
     SrvInfoUdpServer::terminated = true;
     cout << "Value of terminated: " << SrvInfoUdpServer::terminated << endl;
-//    exit(signum);
+    // todo:修改为更加可控的I/O多路复用。在阻塞式调用中需要等待收到报文后，terminated信号才生效
+    exit(signum);
 }
 
 
@@ -45,20 +45,22 @@ int main() {
     // 一个公用的锁，目前只有读
     std::mutex syncReadLock;
 
-
 //    // Register signal SIGINT and signal handler
 //    signal(SIGINT, signalHandler);
     // 谨慎使用 signal, 尽量使用 sigaction
-    struct sigaction sa;
+    struct sigaction sa{};
     sa.sa_handler = signalHandler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
-    sigaction(SIGTERM, &sa, NULL);
-    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGTERM, &sa, nullptr);
+    sigaction(SIGINT, &sa, nullptr);
 
-
+    // difference?
     for (auto &srvThread: srvThreads) {
         srvThread = std::thread(startService, std::ref(syncReadLock));
+    }
+
+    for (auto &srvThread: srvThreads) {
         if (srvThread.joinable()) {
             cout << "[Main] Created thread id: " << srvThread.get_id() << ", joinable." << endl;
             srvThread.join();

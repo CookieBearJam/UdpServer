@@ -63,33 +63,30 @@ int SrvInfoUdpServer::initServer() {
 void SrvInfoUdpServer::startServer() const {
     struct sockaddr_in client_addr{};
     socklen_t sin_size = sizeof(struct sockaddr_in);
-    unsigned short tmpShort = 0;
-    char rcvBuf[BUFSIZE], sendBuf[BUFSIZE]; // 收到报文
-    char reqSrcIP[IP4MAXLEN], reqDstIP[IP4MAXLEN];
-    std::string cli, echo_string; //
+    char rcvBuf[BUFSIZE]; // 收到、发出的报文
+//    char reqSrcIP[IP4MAXLEN], reqDstIP[IP4MAXLEN];
+    uint32_t reqSrcIP, reqDstIP;
+    std::string cli, echo_string; // 客户端信息、返回的json串
 
     // 收到和发出的报文总长度
     ssize_t rcvLen, sendLen;
-    // 收到查询报文中的源目ip地址长度
-    int reqSrcLen, reqDstLen;
     auto *foundItem = new SrvInfo();
 
+    Json::Reader JsonReader;
+    Json::Value JsonRoot, reqContent;
+    int reqType;    // 请求报文类型
 
     while (!terminated) {
         memset(rcvBuf, 0, BUFSIZE);
-        memset(sendBuf, 0, BUFSIZE);
-        memset(reqSrcIP, 0, IP4MAXLEN);
-        memset(reqDstIP, 0, IP4MAXLEN);
 
-        // todo:recvmsg?哪个更高效？
-        // todo:这里是阻塞式的，所以需要一直等待返回
+        JsonRoot.clear();
+        reqContent.clear();
+
         rcvLen = recvfrom(serv_sock, rcvBuf, BUFSIZE, 0, (struct sockaddr *) &client_addr, &sin_size);
         if (rcvLen < 0) {
             perror("Recvfrom() error");
-            // todo:exit和return？？？
             exit(-1);
         } else {
-
             // 发送端的ip地址，将四字节整型转成点分十进制字符串
             cli = inet_ntoa(client_addr.sin_addr);
             // 发送端端口号，将网络字节序转为主机字节序，并且再转成字符串
@@ -101,27 +98,40 @@ void SrvInfoUdpServer::startServer() const {
         }
 
         // 3. 解析收到的消息内容
-        // todo：假设现在是前两个字节是源ip的长度（short），后续的几个字节是源ip的内容
-        //  一个字符表示的长度，也就是可以表示0~255长度的ip地址（字符形式的'1'，ascii=48）
-        memcpy(&tmpShort, rcvBuf, 1);
-        reqSrcLen = tmpShort - 48;
-        memcpy(reqSrcIP, &rcvBuf[1], reqSrcLen);
-
-        memcpy(&tmpShort, &rcvBuf[1 + reqSrcLen], 1);
-        reqDstLen = tmpShort - 48;
-        memcpy(reqDstIP, &rcvBuf[2 + reqSrcLen], reqDstLen);
-
-        // todo:加锁，保证不同的server对象访问期间，只有一个线程中的对象可以修改类的静态变量
-        if (srvInfoList.getSrvInfoBySrcAndDst(reqSrcIP, reqDstIP, foundItem) == 0) {
-            cout << "Find service info successfully.Preparing to send back." << endl;
-            foundItem->toJsonStr(&echo_string);
+        if (JsonReader.parse(rcvBuf, JsonRoot)) {
+            reqType = JsonRoot["type"].asInt();
+            cout << "Rcv request type:" << reqType << endl;
         } else {
-            cout << "Cannot find requested item,return null." << endl;
-            sendBuf[0] = '\0';
-            echo_string = sendBuf;//todo:这个从char[]到string的转换。。。？
+            cout << "Failed to parse request type" << endl;
+            continue;
         }
 
-        // todo:发送的字节数是否包括最后一个\0？
+        if (reqType == REQUEST_USER_ALL) {
+            srvInfoList.toJsonStr(&echo_string);
+        } else if (reqType == REQUEST_USER) {
+            reqContent = JsonRoot["content"];
+            // 解析json中的源和目的ip字段
+            reqSrcIP = reqContent["src_ip"].asInt();
+            reqDstIP = reqContent["dst_ip"].asInt();
+
+/**            memcpy(&tmpShort, rcvBuf, 1);
+            reqSrcLen = tmpShort - 48;
+            memcpy(reqSrcIP, &rcvBuf[1], reqSrcLen);
+
+            memcpy(&tmpShort, &rcvBuf[1 + reqSrcLen], 1);
+            reqDstLen = tmpShort - 48;
+            memcpy(reqDstIP, &rcvBuf[2 + reqSrcLen], reqDstLen);
+            **/
+
+            // todo:加锁，保证不同的server对象访问期间，只有一个线程中的对象可以修改类的静态变量
+            if (srvInfoList.getSrvInfoBySrcAndDst(reqSrcIP, reqDstIP, foundItem) == 0) {
+                cout << "Find service info successfully.Preparing to send back." << endl;
+                foundItem->toJsonStr(&echo_string);
+            } else {
+                cout << "Cannot find requested item, return empty string." << endl;
+            }
+        }
+
         sendLen = sendto(serv_sock, echo_string.c_str(), echo_string.size(), 0, (struct sockaddr *) &client_addr,
                          sin_size);
         if (sendLen < 0) {
@@ -139,5 +149,3 @@ SrvInfoUdpServer::~SrvInfoUdpServer() {
         cout << "Closed all socket on server.Service unavailable." << endl;
     }
 }
-
-

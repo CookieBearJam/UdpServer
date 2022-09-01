@@ -2,6 +2,8 @@
 // Created by shirley on 2022/8/28.
 //
 
+#pragma once
+
 #ifndef JXL_UTILS_H
 #define JXL_UTILS_H
 
@@ -17,7 +19,7 @@ void nanotask() {
     struct timespec interval;
     interval.tv_sec = 10;
     interval.tv_nsec = 0;
-    while(!is_stopped) {
+    while (!is_stopped) {
         std::cout << "nanosleeping" << std::endl;
         nanosleep(&interval, NULL);
         std::cout << "wake up" << std::endl;
@@ -25,7 +27,7 @@ void nanotask() {
 }
 
 void task() {
-    while(!is_stopped) {
+    while (!is_stopped) {
         std::cout << "sleeping" << std::endl;
         // sleep 底层实现还是 nanosleep
         sleep(10);
