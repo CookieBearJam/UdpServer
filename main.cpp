@@ -8,7 +8,7 @@ using namespace std;
 
 #define BUFSIZE 2049
 #define IP4MAXLEN 16    // 点分十进制表示的ip字符串最大长度（含有\0）
-#define THREAD_NUM 2
+#define THREAD_NUM 1
 #define CONFIG_FILE_PATH "../service_info.json"
 
 void startService(std::mutex &syncReadLock) {

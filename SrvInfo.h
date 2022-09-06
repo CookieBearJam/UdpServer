@@ -127,6 +127,8 @@ public:
      * **/
     int init(const string &filepath, int userCnt);
 
+    int getSrvInfoBySrc(uint32_t srcIP, SrvInfo *foundItem) const;
+
     // 根据源ip和目的ip查询用户信息并写入到指针参数中
     int getSrvInfoBySrcAndDst(uint32_t srcIP, uint32_t dstIP, SrvInfo *foundItem) const;
 

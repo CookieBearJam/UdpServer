@@ -30,7 +30,7 @@ void SrvInfo::copyfrom(const SrvInfo &from) {
 // todo:string需要指定为引用类型吗
 void SrvInfo::toJsonStr(std::string *srvInfoJsonStr) {
     Json::Value root, content, srvInfo;
-    root["type"] = "REQUEST_USER";
+    root["type"] = REQUEST_USER;
 
     srvInfo["src_ip"] = this->getSrcIp();
     srvInfo["dst_ip"] = this->getDstIp();
@@ -41,7 +41,7 @@ void SrvInfo::toJsonStr(std::string *srvInfoJsonStr) {
     srvInfo["srv_num"] = this->getSrvNum();
 
     content["user_cnt"] = 1;
-    content["user"] = srvInfo;
+    content["users"][0] = srvInfo;
     root["content"] = content;
 
     *srvInfoJsonStr = root.toStyledString();
@@ -133,6 +133,18 @@ int SrvInfoList::init(const string &filepath, int userCnt) {
 int SrvInfoList::clear() {
     // 只清除列表元素的数据
     return 0;
+}
+
+
+// 返回值-1表示没有找到符合的用户信息，查找成功则返回0
+int SrvInfoList::getSrvInfoBySrc(uint32_t srcIP, SrvInfo *foundItem) const {
+    for (int i = 0; i < this->size; i++) {
+        if (srcIP == this->list[i].getSrcIp()) {
+            foundItem->copyfrom(this->list[i]);
+            return 0;
+        }
+    }
+    return -1;
 }
 
 // 返回值-1表示没有找到符合的用户信息，查找成功则返回0

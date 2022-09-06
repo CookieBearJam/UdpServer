@@ -27,7 +27,7 @@
 
 using namespace std;
 
-
+#define ED_REPLY_PORT 19000
 #define BUFSIZE 2049
 #define IP4MAXLEN 16    // 点分十进制表示的ip字符串最大长度（含有\0）
 
@@ -64,18 +64,5 @@ public:
     ~SrvInfoUdpServer();
 };
 
-
-//int ipStr2Int() {
-//    //将字符串表示的IP转换为整数IP
-//    int dwAddr = inet_addr("127.0.0.1");
-//    cout << "NO1 :IP的整数形式 " << dwAddr << endl;
-//}
-//
-//
-//void int2IPStr(int dwAddr) {
-//    struct in_addr inAddr;
-//    inAddr.s_addr = dwAddr;
-//    cout << "NO2: IP的字符串形式 " << inet_ntoa(inAddr) << endl;
-//}
 
 #endif //JXL_SRVINFOUDPSERVER_H

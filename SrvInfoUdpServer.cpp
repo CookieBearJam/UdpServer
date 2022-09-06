@@ -46,16 +46,17 @@ int SrvInfoUdpServer::initServer() {
 
     bzero(&serv_addr, sizeof(struct sockaddr_in));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);  // 监听来自所有地址的报文，todo：控制只监听ED的报文
     serv_addr.sin_port = htons(portNo);
+    // 避免与adt服务冲突,确认是否有另一张网卡
+    serv_addr.sin_addr.s_addr = inet_addr("10.112.244.216");
 
     // todo:？？第三个参数的sizeof sockaddr 和sizeof(sockaddr_in)哪个更合适？
-    if (bind(serv_sock, (struct sockaddr *) &serv_addr, sizeof(struct sockaddr)) == -1) {
+    if (bind(serv_sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == -1) {
         cout << "bind() error" << endl;
         close(serv_sock);
         return -1;
     } else {
-        cout << "Binding to port:" << portNo << endl;
+        cout << "Binding to port: " << ntohs(serv_addr.sin_port) << " successfully!" << endl;
     }
     return 0;
 }
@@ -64,7 +65,6 @@ void SrvInfoUdpServer::startServer() const {
     struct sockaddr_in client_addr{};
     socklen_t sin_size = sizeof(struct sockaddr_in);
     char rcvBuf[BUFSIZE]; // 收到、发出的报文
-//    char reqSrcIP[IP4MAXLEN], reqDstIP[IP4MAXLEN];
     uint32_t reqSrcIP, reqDstIP;
     std::string cli, echo_string; // 客户端信息、返回的json串
 
@@ -95,6 +95,8 @@ void SrvInfoUdpServer::startServer() const {
             cout << "===================================================" << endl;
             std::cout << "Thread[" << this_thread::get_id() << "], port[" << portNo << "]" << endl;
             std::cout << "Receiving from client: " << cli << ",message >>>>" << rcvBuf << std::endl;
+            client_addr.sin_port = htons(ED_REPLY_PORT);
+            std::cout << "Change port to " << ntohs(client_addr.sin_port) << std::endl;
         }
 
         // 3. 解析收到的消息内容
@@ -106,32 +108,28 @@ void SrvInfoUdpServer::startServer() const {
             continue;
         }
 
+        // todo:定位为何会接收到adt的消息
+        if (reqType != REQUEST_USER && reqType != REQUEST_USER_ALL) {
+            cout << "Received undefined datagram." << endl;
+            continue;
+        }
+
         if (reqType == REQUEST_USER_ALL) {
             srvInfoList.toJsonStr(&echo_string);
-        } else if (reqType == REQUEST_USER) {
+        } else {
             reqContent = JsonRoot["content"];
             // 解析json中的源和目的ip字段
-            reqSrcIP = reqContent["src_ip"].asInt();
-            reqDstIP = reqContent["dst_ip"].asInt();
-
-/**            memcpy(&tmpShort, rcvBuf, 1);
-            reqSrcLen = tmpShort - 48;
-            memcpy(reqSrcIP, &rcvBuf[1], reqSrcLen);
-
-            memcpy(&tmpShort, &rcvBuf[1 + reqSrcLen], 1);
-            reqDstLen = tmpShort - 48;
-            memcpy(reqDstIP, &rcvBuf[2 + reqSrcLen], reqDstLen);
-            **/
+            reqSrcIP = reqContent["ip"].asInt();
+            cout << "Looking for ip:" << reqSrcIP << endl;
 
             // todo:加锁，保证不同的server对象访问期间，只有一个线程中的对象可以修改类的静态变量
-            if (srvInfoList.getSrvInfoBySrcAndDst(reqSrcIP, reqDstIP, foundItem) == 0) {
+            if (srvInfoList.getSrvInfoBySrc(reqSrcIP, foundItem) == 0) {
                 cout << "Find service info successfully.Preparing to send back." << endl;
                 foundItem->toJsonStr(&echo_string);
             } else {
                 cout << "Cannot find requested item, return empty string." << endl;
             }
         }
-
         sendLen = sendto(serv_sock, echo_string.c_str(), echo_string.size(), 0, (struct sockaddr *) &client_addr,
                          sin_size);
         if (sendLen < 0) {
